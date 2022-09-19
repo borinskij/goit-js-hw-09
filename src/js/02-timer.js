@@ -24,6 +24,7 @@ const { input, startBt, days, hours, minutes, seconds } = ref;
 const data = new Date;
 let inputDate = null;
 
+// console.log('ref', textContent)
 
 const options = {
     enableTime: true,
@@ -39,65 +40,57 @@ const options = {
         
     },
 };
+
 flatpickr(input, options)
-// console.log('flatpickr :', flatpickr);
 
 startBt.setAttribute("disabled", true);
 
-
-
-
-
-
+startBt.addEventListener('click', goTimer);
 
 function activeBtStart() {
     if (inputDate.getTime() < data.getTime()) {
-        // console.log('hasAttribute', startBt.hasAttribute('disabled'))
         if (!startBt.hasAttribute("disabled")) {
             startBt.setAttribute("disabled", true);
         }
-        
         return window.alert("Please choose a date in the future")
     } 
     startBt.removeAttribute("disabled");
-// console.log('inputDate', inputDate)
     
 }
+let timerId = null;
+function goTimer() {
+   timerId = setInterval(start, 1000);
 
-startBt.hasAttribute('disabled')
-// const fp = input._flatpickr;
-// const qwe = setTimeout(console.log('fp', fp), 15000)
-// console.log(qwe)
+}
+// const timerId = null;
  
-// input.addEventListener('click', onDatePicker)
-// function onDatePicker() {
-//     if (inputDate.getTime() < data.getTime()) {
-//        return window.alert("Please choose a date in the future")
-//     } 
-    
-// }
+let difference = null;
 
-
-
-let p = ''
-
-startBt.addEventListener('click', start);
 function start() {
     const data = new Date;
-    p = inputDate.getTime() - data.getTime()
-    countdown()
+    difference = inputDate.getTime() - data.getTime();
+    console.log('difference :', difference);
+
+    if (difference < 1000) {
+        return clearInterval(timerId);  
+    } 
+    countdown(); 
 }
+
 
 function countdown() {
-    const qaz = convertMs(p);
-    console.log('qaz', qaz);
-    for (let key in qaz) {
-        console.log('key', qaz[key])
-        ref[key].textContent = qaz[key];
+    const keys = convertMs(difference);
+    for (let key in keys) {
+         ref[key].textContent= addLedingZero(keys[key]) ;
+        
+
     }
-    
 }
 
+function addLedingZero(value) {
+
+    return value.toString().padStart(2, '0')
+}
 
 
 
@@ -116,8 +109,8 @@ function convertMs(ms) {
   const minutes = Math.floor(((ms % day) % hour) / minute);
   // Remaining seconds
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
-    console.log('days', days)
-    console.log('convertMs()', convertMs)
+    // console.log('days', days)
+    // console.log('convertMs()', convertMs)
 // console.log('day', day)
     // console.log('convertMs1', convertMs)
     return { days, hours, minutes, seconds };
