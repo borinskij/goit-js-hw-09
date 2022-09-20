@@ -1,15 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
-// // all modules
-// import Notiflix from 'notiflix';
-
-// // one by one
-// import { Notify } from 'notiflix/build/notiflix-notify-aio';
-// import { Report } from 'notiflix/build/notiflix-report-aio';
-// import { Confirm } from 'notiflix/build/notiflix-confirm-aio';
-// import { Loading } from 'notiflix/build/notiflix-loading-aio';
-// import { Block } from 'notiflix/build/notiflix-block-aio';
-
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const ref = {
     input: document.querySelector('#datetime-picker'),
@@ -20,11 +11,10 @@ const ref = {
     seconds: document.querySelector('[data-seconds]'),
 }
 
-const { input, startBt, days, hours, minutes, seconds } = ref;
+const { input, startBt} = ref;
 const data = new Date;
 let inputDate = null;
 
-// console.log('ref', textContent)
 
 const options = {
     enableTime: true,
@@ -52,17 +42,29 @@ function activeBtStart() {
         if (!startBt.hasAttribute("disabled")) {
             startBt.setAttribute("disabled", true);
         }
-        return window.alert("Please choose a date in the future")
+        return Notify.failure("Please choose a date in the future");
     } 
     startBt.removeAttribute("disabled");
     
 }
-let timerId = null;
-function goTimer() {
-   timerId = setInterval(start, 1000);
 
+const marcup = `<button type="button" data-stop>Stop</button>`;
+
+let timerId = null;
+function stopTimer() {
+    console.log()
+      return clearInterval(timerId)
 }
-// const timerId = null;
+   
+startBt.insertAdjacentHTML('afterend', marcup);
+const stopBt = document.querySelector('[data-stop]');
+    
+function goTimer() {
+    timerId = setInterval(start, 1000);
+
+    stopBt.addEventListener('click', stopTimer);
+    
+}
  
 let difference = null;
 
@@ -75,7 +77,11 @@ function start() {
         return clearInterval(timerId);  
     } 
     countdown(); 
+
+
 }
+
+
 
 
 function countdown() {
@@ -88,41 +94,21 @@ function countdown() {
 }
 
 function addLedingZero(value) {
-
     return value.toString().padStart(2, '0')
 }
 
 
 
 function convertMs(ms) {
-  // Number of milliseconds per unit of time
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
   const day = hour * 24;
 
-  // Remaining days
   const days = Math.floor(ms / day);
-  // Remaining hours
   const hours = Math.floor((ms % day) / hour);
-  // Remaining minutes
   const minutes = Math.floor(((ms % day) % hour) / minute);
-  // Remaining seconds
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
-    // console.log('days', days)
-    // console.log('convertMs()', convertMs)
-// console.log('day', day)
-    // console.log('convertMs1', convertMs)
+
     return { days, hours, minutes, seconds };
 }
-
-
-
-
-
-
-// console.log(convertMs(p)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-// console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-// console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
-// console.log('ref', ref)
-// console.log('days.textContent', days.textContent)
